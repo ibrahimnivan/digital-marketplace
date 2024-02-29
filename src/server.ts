@@ -11,6 +11,8 @@ import { stripeWebhookHandler } from "./webhook"
 import { IncomingMessage } from "http"
 import nextBuild from 'next/dist/build'
 import path from "path"
+import { PayloadRequest } from "payload/types"
+import { parse } from "url"
 
 const app = express()
 const PORT = Number(process.env.PORT) || 3000 // by default process.env is always string
@@ -70,6 +72,25 @@ const start = async () => {
 
     return
   }
+
+  // security for cart page
+  const cartRouter = express.Router()
+
+  cartRouter.use(payload.authenticate)  // must authenticated
+
+  cartRouter.get('/', (req, res) => {
+    const request = req as PayloadRequest
+
+    if (!request.user)
+      return res.redirect('/sign-in?origin=cart')
+
+    const parsedUrl = parse(req.url, true)
+    const { query } = parsedUrl
+
+    return nextApp.render(req, res, '/cart', query)
+  })
+
+  app.use('/cart', cartRouter)
 
   // setup tRPC in our server
   app.use(

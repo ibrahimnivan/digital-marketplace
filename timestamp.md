@@ -27,6 +27,6 @@
 10:39:16 - Listening for stripe webhook locally  -----------------------
 10:47:05 - Creating the receipt email  -----------------------------
 10:54:47 - Deployment to receive webhook in production --------------
-11:10:44 - Final security tweaks
-11:36:08 - Final styling tweaks
+11:10:44 - Final security tweaks ----------------------------------
+11:36:08 - Final styling tweaks -------------------------------------
 11:56:04 - Final check - awesome!

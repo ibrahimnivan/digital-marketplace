@@ -252,6 +252,147 @@ const nextConfig = {
       }
 ```
 ## 6. DEPLOY THE PROJECT AT railway.app (pust project to github first)
-## 
+ - configure env and new url
+
+## 7. CREATE WEBHOOK AT stripe 
+ - create new endpoint api
+   https://nextjs-digital-marketplace-production.up.railway.app/api/webhook/stripe
+ - select events to send: checkout.session.completed
+
+ ![stripe-webhook](./mdpic/stripeweebhok.png)
+
+## 8. DEPLOYMENT DEBUGGING 
+
+8. 1. at package.json
+   "main": "dist/server.ts",
+
+     "resolutions": {
+    "cliui": "7.0.2"
+  },
+
+8. 2. copy signing secret to .env files
+ STRIPE_WEBHOOK_SECRET=
+ - also copy to railway.app
+
+## 11:10:44 - Final security tweaks ---------------------------------------------------
+
+
+## 1. PROTECT cart PAGE AT server.ts (create middleware for cart page)
+
+```ts
+
+      // security for cart page
+      const cartRouter = express.Router()
+
+      cartRouter.use(payload.authenticate)  // must authenticated
+
+      cartRouter.get('/', (req, res) => {
+        const request = req as PayloadRequest
+
+        if (!request.user)
+          return res.redirect('/sign-in?origin=cart')
+
+        const parsedUrl = parse(req.url, true)
+        const { query } = parsedUrl
+
+        return nextApp.render(req, res, '/cart', query)
+      })
+
+      app.use('/cart', cartRouter)
+```
+ 
+## 2. CREATE NEXTJS MIDDLEWARE src > middleware.ts
+ - if user already login it can access sign-in and sign-up page
+
+## 3. UPDATE AT collections > User.ts
+
+
+-  ADD PRODUCT FIELDS AT USER PRODUCT COLLECTION FOR DATA INTEGRITY (collections > User.ts)
+    {
+    name: 'products',
+    label: 'Products',
+    admin: {
+      condition: () => false,
+    },
+    type: 'relationship',
+    relationTo: 'products',
+    hasMany: true,
+  },
+
+- CONFIGURE ACCESS
+ - // the one who can see user is admin and currently login user
+```ts
+ const adminsAndUser: Access = ({ req: { user } }) => { // the one who can see user is admin and currently login user
+  if (user.role === 'admin') return true
+
+  return {
+    id: {
+      equals: user.id,
+    },
+  }
+}
+```
+
+- MODIFY GENERATE EMAIL
+```ts
+    generateEmailHTML: ({ token }) => {
+              return PrimaryActionEmailHtml({
+                actionLabel: "verify your account",
+                buttonText: "Verify Account",
+                href: `${process.env.NEXT_PUBLIC_SERVER_URL}/verify-email?token=${token}`
+              })
+            },
+```
+
+
+## 4. CREATE NEW COMPONENT FRO VERIFICAITON EMAIL > components > email > PrimaryActionEmail.tsx
+ - this components is imported to collections > User.ts
+
+## 5. UPDATE AT collections > Products > Products.ts
+ 5. 1. DATA INTEGRITI sync to user when new product is created
+   - syncUser()
+
+5. 2. MODIFY ACCESS POLICY
+
+```ts
+  access: {
+    read: isAdminOrHasAccess(),
+    update: isAdminOrHasAccess(),
+    delete: isAdminOrHasAccess(),
+  },
+```
+
+### note: everytime we modify collection fields we should run generate:types to update typescript types
+
+## 11:36:08 - Final styling tweaks --------------------------------------------------------------------
+
+## 1. CREATE NEW ROUTE products > page.tsx  
+
+
+## 2. CREATE COMPONENT components > Footer.tsx
+ - imported to layout.tsx 
+
+## 3. CREATE COMPONENT components > MobileNav.tsx
+ - imported to Navbar.tsx
+
+##  4. FIX METADATA OF PAGE IN lib > utils.ts
+ - create constructMetadata() => use in layout.tsx
+
+## 5. CHANGE NEXTJS CONFIG TO IMAGE
+ - from :
+   remotePatterns: [
+       {
+         hostname: 'localhost',
+         pathname: '**',
+         port: '3000',
+         protocol: "http"
+       }
+     ]
+
+ - to :
+    domains: [
+      'localhost',
+      'nextjs-digital-marketplace-production.up.railway.app'
+    ]
 ## 
 ## 
