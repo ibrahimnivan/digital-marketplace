@@ -4,10 +4,14 @@ import { Icons } from "./Icons";
 import NavItems from "./NavItems";
 import { buttonVariants } from "./ui/button";
 import Cart from "./Cart";
+import { getServerSideUser } from "@/lib/payload-utils";
+import { cookies } from 'next/headers'
+import UserAccountNav from "./UserAccountNav";
 
-const Navbar = () => {
-  // Mock a user -- pretending we have data
-  const user = null;
+const Navbar = async() => {
+
+  const nextCookies = cookies()
+  const { user } = await getServerSideUser(nextCookies)
 
   return (
     <div className='bg-white sticky z-50 top-0 inset-x-0 h-16'>
@@ -15,7 +19,9 @@ const Navbar = () => {
         <MaxWidthWrapper>
           <div className='border-b border-gray-200'>
             <div className='flex h-16 items-center'>
+
               {/* TODO: mobile nav */}
+              
               <div className='ml-4 flex lg:ml-0'>
                 <Link href='/'>
                   <Icons.logo className='h-10 w-10' />
@@ -28,6 +34,8 @@ const Navbar = () => {
 
               <div className='ml-auto flex items-center'>
                 <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
+
+                  {/* only render if we dont have user*/}
                   {user ? null : (
                     <Link
                       href='/sign-in'
@@ -42,12 +50,12 @@ const Navbar = () => {
 
                   {/* untuk garis lurus when user = null */}
                   {user ? null : (
-                    <span className='h-6 w-px bg-gray-200' aria-hidden='true' />
+                    <span className='h-6 w-px bg-gray-400' aria-hidden='true' />
                   )}
 
+                  {/* create accuont is user = null,  */}
                   {user ? (
-                    // <UserAccountNav user={user} />
-                    <p></p>
+                    <UserAccountNav user={user} />
                   ) : (
                     <Link
                       href='/sign-up'
@@ -59,9 +67,10 @@ const Navbar = () => {
                     </Link>
                   )}
 
-                  {/* Saat ada user */}
+
+                  {/* Saat ngga ada user */}
                   {user ? (
-                    <span className='h-6 w-px bg-gray-200' aria-hidden='true' />
+                    <span className='h-6 w-px bg-gray-400' aria-hidden='true' />
                   ) : null}
 
                   {/* untuk garis lurus when user = null */}
@@ -74,9 +83,11 @@ const Navbar = () => {
                     </div>
                   )}
 
+                  {/* for cart component */}
                   <div className='ml-4 flow-root lg:ml-6'>
                     <Cart />
                   </div>
+
                 </div>
               </div>
             </div>

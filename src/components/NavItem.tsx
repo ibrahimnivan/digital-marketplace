@@ -6,7 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-type Category = (typeof PRODUCT_CATEGORIES)[number];
+type Category = typeof PRODUCT_CATEGORIES[number];
 
 interface NavItemProps {
   category: Category;
@@ -15,7 +15,7 @@ interface NavItemProps {
   isAnyOpen: boolean;
 }
 
-const NavItem = ({ isAnyOpen, category, handleOpen, isOpen }: NavItemProps) => {
+const NavItem = ({ isAnyOpen, category, handleOpen, isOpen }: NavItemProps) => { // Props
   return (
     <div className='flex'>
       <div className='relative flex items-center'>
@@ -33,11 +33,12 @@ const NavItem = ({ isAnyOpen, category, handleOpen, isOpen }: NavItemProps) => {
         </Button>
       </div>
 
+      {/* Only render if we click it */}
       {isOpen ? (
         <div
           className={cn(
             "absolute inset-x-0 top-full text-sm text-muted-foreground",
-            { "animate-in fade-in slide-in-from-top-5": !isAnyOpen }
+            { "animate-in fade-in-10 slide-in-from-top-5": !isAnyOpen }
           )}
         >
           <div
@@ -49,6 +50,7 @@ const NavItem = ({ isAnyOpen, category, handleOpen, isOpen }: NavItemProps) => {
             <div className='mx-auto max-w-7xl px-8'>
               <div className='grid grid-cols-4 gap-x-8 gap-y-10 py-16'>
                 <div className='col-span-4 col-start-1 grid grid-cols-3 gap-x-8'>
+
                   {category.featured.map((item) => (
                     <div key={item.name}  className='group relative text-base sm:text-sm'>
                       <div className='relative aspect-video overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75'>
@@ -65,6 +67,7 @@ const NavItem = ({ isAnyOpen, category, handleOpen, isOpen }: NavItemProps) => {
                         className='mt-6 block font-medium text-gray-900'>
                         {item.name}
                       </Link>
+                      
                       <p
                         className='mt-1'
                         aria-hidden='true'>

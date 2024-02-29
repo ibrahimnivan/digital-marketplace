@@ -25,7 +25,7 @@ export const PRODUCT_CATEGORIES = [
     value: 'icons' as const, //for case sensitive example: for url
     featured: [
       {
-        name: 'Editor picks',
+        name: 'Favorite Icon picks',
         href: '#',
         imageSrc: '/nav/icons/picks.jpg'
       },
