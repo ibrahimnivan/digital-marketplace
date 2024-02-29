@@ -19,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='h-full'>
+        <head>
+        <link rel="preload" href="/path/to/bc8831281eb208c3.css" as="style" />
+      </head>
       <body
         className={cn("relative h-full font-sans antialiased", inter.className)}
       >
